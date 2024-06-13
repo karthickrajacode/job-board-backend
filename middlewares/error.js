@@ -1,13 +1,13 @@
 class ErrorHandler extends Error {
-    contructer(message, stateCode) {
-        Super(message)
-        this.stateCode = stateCode
+    constructor(message, statusCode) {
+        super(message)
+        this.statusCode = statusCode;
     }
 };
 
 export const errorMiddleWare = (err, req, res, next) => {
     err.message = err.message || "Internel server error";
-    err.stateCode = err.stateCode || 500;
+    err.statusCode = err.statusCode || 500;
 
     if (err.name === "caseError") {
         const message = `Resource not found.invalid ${err.path}`;
@@ -28,10 +28,10 @@ export const errorMiddleWare = (err, req, res, next) => {
         const message = `Json Web Token Expired, Try Again`;
         err = new ErrorHandler(message, 400);
     }
-    return res.status(statusCode).json({
+    return res.status(err.statusCode).json({
         success: false,
-        message: err.message
-    })
+        message: err.message,
+    });
 };
 export default ErrorHandler;
 
