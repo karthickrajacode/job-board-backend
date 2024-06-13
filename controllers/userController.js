@@ -1,13 +1,14 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
-import ErrorHandler from "../middlewares/error";
+import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/userSchema.js";
+import { sendToken } from "../utils/jwtToken.js";
 
 export const register = catchAsyncError(async (req, res, next) => {
     const { name, email, phone, role, password } = req.body
-    if (!name || !email || !phone || !role || !password ||) {
+    if (!name || !email || !phone || !role || !password) {
         return next(new ErrorHandler("Please full fill registeration form!"));
     }
-    const isEmail = await User.Findone({ email });
+    const isEmail = await User.findOne({ email });
     if (isEmail) {
         return next(new ErrorHandler("Email  already exist!"));
     }
@@ -18,9 +19,27 @@ export const register = catchAsyncError(async (req, res, next) => {
         role,
         password
     });
-    res.status(200).json({
-        success: true,
-        message: "user registered!",
-        user,
-    });
+    sendToken(user, 200, res, "user Registered successfully!")
+});
+
+export const login = catchAsyncError(async (req, res, next) => {
+    const { email, password, role } = req.body;
+
+    if (!email || !password || !role) {
+        return next(
+            new ErrorHandler("Please provide email, password, role.", 400)
+        );
+    }
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+        new ErrorHandler("Invalid Email or password", 400);
+    }
+    const isPasswordMatched = await user.comparePassword(password);
+    if (!isPasswordMatched) {
+        new ErrorHandler("Invalid Email or Password", 400);
+    }
+    if (user.role !== role) {
+        new ErrorHandler("User with is role not found!", 400);
+    }
+    sendToken(user, 200, res, "User logged in Succesfully!")
 });
