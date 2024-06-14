@@ -1,9 +1,13 @@
 import express from "express";
-import { getAllJobs } from "../controllers/jobControllers.js"
+import { getAllJobs, getmyJobs, postJob } from "../controllers/jobControllers.js"
+import { isAuthorized } from "../middlewares/auth.js"
 
-const router = express();
+const router = express.Router();
 
 router.get("/getall", getAllJobs)
+router.post("/post", isAuthorized, postJob)
+router.get("/getmyjobs", isAuthorized, getmyJobs)
+
 
 
 export default router;
