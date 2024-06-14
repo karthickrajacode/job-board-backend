@@ -1,3 +1,4 @@
+import { json } from "express";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/userSchema.js";
@@ -32,14 +33,27 @@ export const login = catchAsyncError(async (req, res, next) => {
     }
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-        new ErrorHandler("Invalid Email or password", 400);
+        return next(new ErrorHandler("Invalid Email or password", 400));
     }
     const isPasswordMatched = await user.comparePassword(password);
     if (!isPasswordMatched) {
-        new ErrorHandler("Invalid Email or Password", 400);
+        return next(new ErrorHandler("Invalid Email or Password", 400));
     }
     if (user.role !== role) {
-        new ErrorHandler("User with is role not found!", 400);
+        return next(new ErrorHandler("User with is role not found!", 400));
     }
     sendToken(user, 200, res, "User logged in Succesfully!")
 });
+
+export const logout = catchAsyncError(async (req, res, next) => {
+    res
+        .status(201)
+        .cookie("token", "", {
+            httpOnly: true,
+            expires: new Date(Date.now()),
+        })
+        .json({
+            success: true,
+            message: "User loggged out Succsessfully!",
+        });
+})
