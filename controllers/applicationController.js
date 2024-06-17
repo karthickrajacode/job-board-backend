@@ -1,6 +1,6 @@
-import { application } from "express";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
+import { Application } from "../models/applicationSchema.js";
 
 export const employerGetAllApplications = catchAsyncError(async (req, res, next) => {
     const { role } = req.user;
@@ -12,7 +12,7 @@ export const employerGetAllApplications = catchAsyncError(async (req, res, next)
         );
     }
     const { _id } = req.user;
-    const applications = await application.find({ "employerID.user": _id })
+    const applications = await Application.find({ "employerID.user": _id })
     res.status(200).json({
         success: true,
         applications
