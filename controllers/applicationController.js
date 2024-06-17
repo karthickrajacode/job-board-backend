@@ -2,7 +2,7 @@ import { application } from "express";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 
-export const employerGetAllApplication = catchAsyncError(async (req, res, next) => {
+export const employerGetAllApplications = catchAsyncError(async (req, res, next) => {
     const { role } = req.user;
     if (role === "Job Seeker") {
         return next(new ErrorHandler(
@@ -18,7 +18,7 @@ export const employerGetAllApplication = catchAsyncError(async (req, res, next) 
         applications
     })
 });
-export const jobSeekerGetAllApplication = catchAsyncError(async (req, res, next) => {
+export const jobSeekerGetAllApplications = catchAsyncError(async (req, res, next) => {
     const { role } = req.user;
     if (role === "Employer") {
         return next(new ErrorHandler(
