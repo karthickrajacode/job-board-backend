@@ -4,6 +4,22 @@ import ErrorHandler from "../middlewares/error.js";
 
 export const employerGetAllApplication = catchAsyncError(async (req, res, next) => {
     const { role } = req.user;
+    if (role === "Job Seeker") {
+        return next(new ErrorHandler(
+            "Job Seeker is not allowed access is resources!",
+            400
+        )
+        );
+    }
+    const { _id } = req.user;
+    const applications = await application.find({ "employerID.user": _id })
+    res.status(200).json({
+        success: true,
+        applications
+    })
+});
+export const jobSeekerGetAllApplication = catchAsyncError(async (req, res, next) => {
+    const { role } = req.user;
     if (role === "Employer") {
         return next(new ErrorHandler(
             "Employer is not allowed access is resources!",
@@ -21,9 +37,9 @@ export const employerGetAllApplication = catchAsyncError(async (req, res, next) 
 
 export const jobSeekerDeleteApplication = catchAsyncError(async (req, res, next) => {
     const { role } = req.user;
-    if (role === "job seeker") {
+    if (role === "Employer") {
         return next(new ErrorHandler(
-            "Job seeker is not allowed access is resources!",
+            "Employer is not allowed access is resources!",
             400
         )
         );
