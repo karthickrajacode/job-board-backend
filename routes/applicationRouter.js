@@ -8,8 +8,8 @@ import { isAuthorized } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/jobseeker/getall", isAuthorized, employerGetAllApplications);
-router.get("/employer/getall", isAuthorized, jobSeekerGetAllApplications);
+router.get("/employer/getall", isAuthorized, employerGetAllApplications);
+router.get("/jobseeker/getall", isAuthorized, jobSeekerGetAllApplications);
 router.delete("/delete/:id", isAuthorized, jobSeekerDeleteApplication);
 
 export default router;
