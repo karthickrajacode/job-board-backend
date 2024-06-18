@@ -55,3 +55,22 @@ export const jobSeekerDeleteApplication = catchAsyncError(async (req, res, next)
         message: "Application Delete Succesfully! "
     })
 });
+
+export const postApplication = catchAsyncError(async (req, res, next) => {
+    const { role } = req.user;
+    if (role === "Employer") {
+        return next(new ErrorHandler(
+            "Employer is not allowed access is resources!",
+            400
+        )
+        );
+    }
+    if (!req.files || Object.keys(req.files) === 0) {
+        return next(new ErrorHandler("Resume file required"));
+    }
+    const { resume } = req.files;
+    const allowedFormats = ["image/png", "image/jpg", "image/webp"]
+    if (!allowedFormats.includes(resume.mimetypes)) {
+        return next(new ErrorHandler("Invalid the types. Please upload you resume PNG or JPG and WEBP formats."))
+    }
+});
