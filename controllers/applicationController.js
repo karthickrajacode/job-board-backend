@@ -1,8 +1,8 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Application } from "../models/applicationSchema.js";
-import cloudinary from "cloudinary";
 import { Job } from "../models/jobSchema.js";
+import cloudinary from "cloudinary"
 
 export const employerGetAllApplications = catchAsyncError(async (req, res, next) => {
     const { role } = req.user; 
@@ -72,10 +72,11 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
     }
     const { resume } = req.files;
     const allowedFormats = ["image/png", "image/jpg", "image/webp"]
-    if (!allowedFormats.includes(resume.mimetypes)) {
+    if (!allowedFormats.includes(resume.mimetype)) {
         return next(new ErrorHandler("Invalid the types. Please upload you resume PNG or JPG and WEBP formats."))
     }
-    const cloudinary = await cloudinary.uploader.upload(
+
+    const cloudinaryResponse = await cloudinary.uploader.upload(
         resume.tempFilePath
     );
     if (!cloudinaryResponse || cloudinaryResponse.error) {
@@ -90,10 +91,10 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
         user: req.user._id,
         role: "job seeker"
     }
-    if (!jobId) {
+    if (!jobid) {
         return next(new ErrorHandler("Job not found!", 404));
     }
-    const jobDetails = await Job.findById(jobId);
+    const jobDetails = await Job.findById(jobid);
     if (!jobDetails) {
         return next(new ErrorHandler("Job not found!", 404));
     }
@@ -122,7 +123,7 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
         applicantID,
         employerID,
         resume: {
-            public_id: clouddinaryResponse.public_id,
+            public_id: cloudinaryResponse.public_id,
             url: cloudinaryResponse.secure_url,
         },
     });
