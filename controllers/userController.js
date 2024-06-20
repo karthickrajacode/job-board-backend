@@ -1,4 +1,3 @@
-import { json } from "express";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/userSchema.js";
@@ -56,4 +55,11 @@ export const logout = catchAsyncError(async (req, res, next) => {
             success: true,
             message: "User loggged out Succsessfully!",
         });
+});
+export const getUser = catchAsyncError((req, res, next) => {
+    const user = req.user;
+    res.status(200).json({
+        success: true,
+        user,
+    })
 })
