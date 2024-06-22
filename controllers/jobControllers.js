@@ -21,18 +21,18 @@ export const postJob = catchAsyncError(async (req, res, next) => {
         );
     }
 
-    const { title, description, category, country, city, location, fixedSalary, salaryForm, salaryTo, } = req.body;
+    const { title, description, category, country, city, location, fixedSalary, salaryFrom, salaryTo, } = req.body;
 
     if (!title || !description || !category || !city || !location) {
         return next(new ErrorHandler("Please provide full job details", 400))
     }
-    if ((!salaryForm || !salaryTo) && !fixedSalary) {
+    if ((!salaryFrom || !salaryTo) && !fixedSalary) {
         return next(
             new ErrorHandler("Please either provide fixed salary or ranged salary"
             )
         );
     }
-    if ((salaryForm && salaryTo) && fixedSalary) {
+    if ((salaryFrom && salaryTo) && fixedSalary) {
         return next(
             new ErrorHandler("Please either fixed salary and ranged salary together!"
             )
@@ -40,7 +40,7 @@ export const postJob = catchAsyncError(async (req, res, next) => {
     }
     const postedBy = req.user._id;
     const job = await Job.create({
-        title, description, category, country, city, location, fixedSalary, salaryForm, salaryTo, postedBy
+        title, description, category, country, city, location, fixedSalary, salaryFrom, salaryTo, postedBy
     })
     res.status(200).json({
         success: true,
