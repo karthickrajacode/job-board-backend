@@ -30,7 +30,7 @@ export const jobSeekerGetAllApplications = catchAsyncError(async (req, res, next
         );
     }
     const { _id } = req.user;
-    const applications = await application.find({ "applicantID.user": _id })
+    const applications = await Application.find({ "applicantID.user": _id })
     res.status(200).json({
         success: true,
         applications
