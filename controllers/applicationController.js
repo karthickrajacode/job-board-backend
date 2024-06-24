@@ -71,7 +71,7 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
         return next(new ErrorHandler("Resume file required"));
     }
     const { resume } = req.files;
-    const allowedFormats = ["image/png", "image/jpg", "image/webp"]
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"]
     if (!allowedFormats.includes(resume.mimetype)) {
         return next(new ErrorHandler("Invalid the types. Please upload you resume PNG or JPG and WEBP formats."))
     }
@@ -86,15 +86,15 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
         );
         return next(new ErrorHandler("Faile to upload resume.", 500));
     }
-    const { name, email, coverletter, phone, address, jobid } = req.body;
+    const { name, email, coverLetter, phone, address, jobId } = req.body;
     const applicantID = {
         user: req.user._id,
         role: "job seeker"
     }
-    if (!jobid) {
+    if (!jobId) {
         return next(new ErrorHandler("Job not found!", 404));
     }
-    const jobDetails = await Job.findById(jobid);
+    const jobDetails = await Job.findById(jobId);
     if (!jobDetails) {
         return next(new ErrorHandler("Job not found!", 404));
     }
@@ -105,19 +105,19 @@ export const postApplication = catchAsyncError(async (req, res, next) => {
     if (
         !name ||
         !email ||
-        !coverletter ||
+        !coverLetter ||
         !phone ||
         !address ||
         !applicantID ||
         !employerID ||
         !resume
     ) {
-        return next(new ErrorHandler("Please fil all field!", 400))
+        return next(new ErrorHandler("Please fill all field!", 400))
     }
     const application = await Application.create({
         name,
         email,
-        coverletter,
+        coverLetter,
         phone,
         address,
         applicantID,
